@@ -18,10 +18,11 @@
  * 11. Tab: Historial
  * 12. Tab: Ajustes
  * 13. Exportación PDF
- * 14. Modal Acerca de
- * 15. Modal confirmación + Toast
- * 16. Utilidades
- * 17. Arranque
+ * 14. Importación PDF / DOCX
+ * 15. Modal Acerca de
+ * 16. Modal confirmación + Toast
+ * 17. Utilidades
+ * 18. Arranque
  */
 
 'use strict';
@@ -1260,7 +1261,157 @@ function exportarPDF(texto, caso) {
 }
 
 /* ============================================================
-   14. MODAL ACERCA DE
+   14. IMPORTACIÓN PDF / DOCX
+   ============================================================ */
+
+// --- Constantes ---
+const IMPORT_MIN_CHARS  = 300;   // mínimo para considerar extracción válida
+const IMPORT_PREVIEW_LEN = 1000; // caracteres mostrados en vista previa
+
+// --- Referencias DOM ---
+const importFileInput   = document.getElementById('import-file-input');
+const importFileName    = document.getElementById('import-file-name');
+const importStatus      = document.getElementById('import-status');
+const importPreviewWrap = document.getElementById('import-preview');
+const importPreviewText = document.getElementById('import-preview-text');
+const importPreviewChars = document.getElementById('import-preview-chars');
+const btnImportClear    = document.getElementById('btn-import-clear');
+const btnImportUsar     = document.getElementById('btn-import-usar');
+
+// Texto extraído completo (sin truncar) — se usa al pulsar "Usar este texto"
+let _importedFullText = '';
+
+// --- Helpers de UI ---
+function importSetStatus(msg, mode /* 'loading' | 'ok' | 'warn' | 'error' | '' */) {
+  importStatus.textContent = msg;
+  importStatus.className   = 'import-status' + (mode ? ' ' + mode : '');
+  importStatus.style.display = msg ? '' : 'none';
+}
+
+function importReset() {
+  importFileInput.value    = '';
+  importFileName.textContent = 'Ningún archivo seleccionado';
+  importFileName.classList.remove('has-file');
+  importSetStatus('', '');
+  importPreviewWrap.style.display = 'none';
+  importPreviewText.value         = '';
+  importPreviewChars.textContent  = '';
+  btnImportClear.style.display    = 'none';
+  _importedFullText = '';
+}
+
+function importShowPreview(fullText) {
+  _importedFullText = fullText;
+  const total   = fullText.length;
+  const preview = fullText.substring(0, IMPORT_PREVIEW_LEN);
+  importPreviewText.value = preview + (total > IMPORT_PREVIEW_LEN ? '\n\n[… texto truncado en vista previa …]' : '');
+  importPreviewChars.textContent = `${total.toLocaleString('es-ES')} caracteres extraídos`;
+  importPreviewWrap.style.display = '';
+}
+
+// --- Extracción DOCX (Mammoth) ---
+async function extractDocx(file) {
+  if (typeof mammoth === 'undefined') {
+    throw new Error('La librería Mammoth.js no está disponible. Comprueba la conexión a internet.');
+  }
+  const arrayBuffer = await file.arrayBuffer();
+  const result      = await mammoth.extractRawText({ arrayBuffer });
+  // Mammoth puede devolver advertencias, las ignoramos si hay texto
+  return result.value || '';
+}
+
+// --- Extracción PDF (PDF.js) ---
+async function extractPdf(file) {
+  if (typeof pdfjsLib === 'undefined') {
+    throw new Error('La librería PDF.js no está disponible. Comprueba la conexión a internet.');
+  }
+  const arrayBuffer = await file.arrayBuffer();
+  const loadingTask = pdfjsLib.getDocument({ data: arrayBuffer });
+  const pdf         = await loadingTask.promise;
+  const numPages    = pdf.numPages;
+  const parts       = [];
+
+  for (let i = 1; i <= numPages; i++) {
+    const page    = await pdf.getPage(i);
+    const content = await page.getTextContent();
+    // Concatenar ítems de texto con espacio; separar entre páginas con \n\n
+    const pageText = content.items.map(item => item.str).join(' ');
+    if (pageText.trim()) parts.push(pageText.trim());
+  }
+
+  return parts.join('\n\n');
+}
+
+// --- Manejador principal de selección de archivo ---
+importFileInput.addEventListener('change', async () => {
+  const file = importFileInput.files[0];
+  if (!file) { importReset(); return; }
+
+  // Mostrar nombre del archivo
+  importFileName.textContent = file.name;
+  importFileName.classList.add('has-file');
+  btnImportClear.style.display = '';
+  importPreviewWrap.style.display = 'none';
+  importSetStatus('Extrayendo texto del documento…', 'loading');
+
+  try {
+    const ext = file.name.split('.').pop().toLowerCase();
+    let text = '';
+
+    if (ext === 'docx') {
+      text = await extractDocx(file);
+    } else if (ext === 'pdf') {
+      text = await extractPdf(file);
+    } else {
+      importSetStatus('Formato no soportado. Selecciona un archivo PDF o DOCX.', 'error');
+      return;
+    }
+
+    // Normalizar espacios en blanco excesivos
+    text = text.replace(/[ \t]+/g, ' ').replace(/\n{3,}/g, '\n\n').trim();
+
+    if (text.length < IMPORT_MIN_CHARS) {
+      importSetStatus(
+        'No se ha podido extraer texto suficiente. El PDF puede ser escaneado (imagen). ' +
+        'Pruebe con DOCX o copie-pegue el texto manualmente.',
+        'warn'
+      );
+      // Mostrar igualmente lo que se pudo extraer, si hay algo
+      if (text.length > 0) importShowPreview(text);
+      return;
+    }
+
+    importSetStatus(
+      ext === 'pdf'
+        ? `PDF leído correctamente (${text.length.toLocaleString('es-ES')} caracteres, solo texto embebido).`
+        : `DOCX leído correctamente (${text.length.toLocaleString('es-ES')} caracteres).`,
+      'ok'
+    );
+    importShowPreview(text);
+
+  } catch (err) {
+    console.error('[IMPORT]', err);
+    importSetStatus('Error al procesar el archivo: ' + (err.message || 'error desconocido'), 'error');
+  }
+});
+
+// --- Botón "Usar este texto" ---
+btnImportUsar.addEventListener('click', () => {
+  if (!_importedFullText) return;
+  document.getElementById('campo-texto').value = _importedFullText;
+  // Scroll suave al textarea
+  document.getElementById('campo-texto').scrollIntoView({ behavior: 'smooth', block: 'center' });
+  showToast('Texto importado en el campo del protocolo.', 'success');
+  // Colapsar vista previa pero mantener estado
+  importPreviewWrap.style.display = 'none';
+  importSetStatus('Texto volcado al protocolo. Puedes editarlo libremente.', 'ok');
+});
+
+// --- Botón "Limpiar" ---
+btnImportClear.addEventListener('click', () => { importReset(); });
+
+/* ============================================================
+   15. MODAL ACERCA DE
    ============================================================ */
 
 function openAcercaDe() {
@@ -1291,7 +1442,7 @@ document.addEventListener('keydown', (e) => {
 });
 
 /* ============================================================
-   15. MODAL CONFIRMACIÓN + TOAST
+   16. MODAL CONFIRMACIÓN + TOAST
    ============================================================ */
 
 let _modalCallback = null;
@@ -1325,7 +1476,7 @@ function showToast(msg, type = 'info', duration = 3500) {
 }
 
 /* ============================================================
-   16. UTILIDADES
+   17. UTILIDADES
    ============================================================ */
 
 // Escapa HTML para prevenir XSS en innerHTML
@@ -1339,10 +1490,16 @@ function esc(str) {
 }
 
 /* ============================================================
-   17. ARRANQUE
+   18. ARRANQUE
    ============================================================ */
 
 async function init() {
+  // Configurar el worker de PDF.js (debe apuntar a la misma versión que el CDN)
+  if (typeof pdfjsLib !== 'undefined') {
+    pdfjsLib.GlobalWorkerOptions.workerSrc =
+      'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js';
+  }
+
   try {
     await openDB();
   } catch (err) {

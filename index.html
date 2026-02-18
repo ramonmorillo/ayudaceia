@@ -4,8 +4,12 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>AYUDA CEIA</title>
-  <!-- jsPDF CDN para exportación PDF client-side -->
+  <!-- jsPDF: exportación PDF client-side -->
   <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+  <!-- PDF.js: extracción de texto de PDF en el navegador -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
+  <!-- Mammoth.js: extracción de texto de DOCX en el navegador -->
+  <script src="https://unpkg.com/mammoth@1.6.0/mammoth.browser.min.js"></script>
   <link rel="stylesheet" href="styles.css" />
 </head>
 <body>
@@ -121,8 +125,40 @@
 
         <div class="form-group full-width">
           <label for="campo-texto">Texto del protocolo <span class="req">*</span></label>
-          <p class="field-hint">Pega aquí el texto completo del protocolo (recomendado). Para ficheros PDF/DOCX, copia el texto manualmente desde el documento.</p>
+          <p class="field-hint">Pega el texto directamente o usa el bloque de importación para extraerlo de un PDF o DOCX.</p>
           <textarea id="campo-texto" rows="18" placeholder="Pega aquí el texto completo del protocolo...&#10;&#10;Consejo: incluye todos los apartados (objetivos, metodología, participantes, procedimientos, consideraciones éticas, etc.) para que la Lectura Guiada y la Evaluación sean más útiles."></textarea>
+        </div>
+
+        <!-- ===== BLOQUE IMPORTACIÓN PDF / DOCX ===== -->
+        <div class="import-block full-width" id="import-block">
+          <div class="import-block-header">
+            <span class="import-block-title">Importar documento</span>
+            <span class="import-block-badge">PDF · DOCX</span>
+            <span class="import-block-hint">Procesamiento 100% local &mdash; el archivo no sale de tu navegador</span>
+          </div>
+
+          <div class="import-controls">
+            <label class="import-file-label" for="import-file-input">
+              Seleccionar PDF / DOCX
+            </label>
+            <input type="file" id="import-file-input" accept=".pdf,.docx" />
+            <span class="import-file-name" id="import-file-name">Ningún archivo seleccionado</span>
+            <button type="button" class="btn-icon import-clear-btn" id="btn-import-clear" style="display:none">✕ Limpiar</button>
+          </div>
+
+          <!-- Spinner / estado -->
+          <div class="import-status" id="import-status" style="display:none" role="status" aria-live="polite"></div>
+
+          <!-- Vista previa -->
+          <div class="import-preview" id="import-preview" style="display:none">
+            <label class="import-preview-label">Vista previa del texto extraído</label>
+            <textarea id="import-preview-text" class="import-preview-textarea" rows="7" readonly
+              placeholder="El texto extraído aparecerá aquí..."></textarea>
+            <div class="import-preview-actions">
+              <button type="button" class="btn-primary" id="btn-import-usar">Usar este texto en el protocolo →</button>
+              <span class="import-preview-chars" id="import-preview-chars"></span>
+            </div>
+          </div>
         </div>
 
         <div class="form-actions">

@@ -611,6 +611,202 @@ textarea { resize: vertical; }
 }
 .settings-info li { margin-bottom: 5px; }
 
+/* ---- BOTÓN ACERCA DE (header) ---- */
+.btn-acerca-de {
+  background: rgba(255,255,255,.13);
+  border: 1.5px solid rgba(255,255,255,.4);
+  border-radius: var(--radius);
+  color: rgba(255,255,255,.92);
+  font-family: var(--font);
+  font-size: .8rem;
+  font-weight: 600;
+  padding: 6px 14px;
+  cursor: pointer;
+  letter-spacing: .02em;
+  transition: background .15s, border-color .15s;
+  white-space: nowrap;
+}
+.btn-acerca-de:hover {
+  background: rgba(255,255,255,.22);
+  border-color: rgba(255,255,255,.7);
+}
+
+/* ---- MODAL ACERCA DE ---- */
+.acerca-overlay { align-items: flex-start; padding: 24px 16px; overflow-y: auto; }
+
+.acerca-box {
+  background: var(--white);
+  border-radius: var(--radius-lg);
+  width: 100%;
+  max-width: 680px;
+  margin: auto;
+  box-shadow: 0 8px 32px rgba(0,0,0,.18);
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+
+.acerca-header {
+  background: var(--blue-dark);
+  color: var(--white);
+  padding: 20px 28px;
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 16px;
+}
+.acerca-header h2 {
+  font-size: 1.4rem;
+  font-weight: 700;
+  color: var(--white);
+  letter-spacing: .03em;
+}
+.acerca-tagline {
+  font-size: .8rem;
+  opacity: .75;
+  margin-top: 3px;
+}
+.acerca-close {
+  background: none;
+  border: none;
+  color: rgba(255,255,255,.8);
+  font-size: 1.7rem;
+  line-height: 1;
+  cursor: pointer;
+  padding: 0 4px;
+  margin-top: -2px;
+  transition: color .15s;
+  flex-shrink: 0;
+}
+.acerca-close:hover { color: var(--white); }
+
+.acerca-body {
+  padding: 0 28px 10px;
+  overflow-y: auto;
+  max-height: calc(100vh - 220px);
+}
+
+.acerca-seccion {
+  padding: 20px 0;
+  border-bottom: 1px solid var(--gray-200);
+}
+.acerca-seccion:last-child { border-bottom: none; }
+
+.acerca-seccion h3 {
+  font-size: .95rem;
+  font-weight: 700;
+  color: var(--blue-dark);
+  text-transform: uppercase;
+  letter-spacing: .06em;
+  margin-bottom: 10px;
+  padding-bottom: 6px;
+  border-bottom: 2px solid var(--blue-border);
+}
+
+.acerca-seccion p {
+  font-size: .9rem;
+  color: var(--gray-700);
+  line-height: 1.6;
+  margin-bottom: 6px;
+}
+.acerca-seccion ul {
+  font-size: .9rem;
+  color: var(--gray-700);
+  line-height: 1.7;
+  margin: 6px 0 0 1.2em;
+}
+.acerca-seccion ul ul { margin-top: 2px; margin-bottom: 2px; }
+
+.acerca-bloque { margin-bottom: 10px; }
+
+.acerca-nombre {
+  font-size: 1rem !important;
+  font-weight: 700 !important;
+  color: var(--blue-dark) !important;
+}
+
+.acerca-no {
+  font-weight: 700;
+  color: var(--rojo);
+}
+
+/* Citas bibliográficas */
+.acerca-cita {
+  background: var(--gray-100);
+  border-left: 3px solid var(--blue-mid);
+  border-radius: 0 var(--radius) var(--radius) 0;
+  padding: 10px 14px;
+  margin: 10px 0;
+}
+.acerca-cita-label {
+  font-size: .75rem !important;
+  font-weight: 700 !important;
+  color: var(--blue-mid) !important;
+  text-transform: uppercase;
+  letter-spacing: .05em;
+  margin-bottom: 4px !important;
+}
+.acerca-url {
+  font-family: var(--font-mono);
+  font-size: .83rem;
+  color: var(--blue-mid);
+  word-break: break-all;
+}
+
+/* Sección contacto */
+.acerca-seccion-contacto { background: var(--blue-light); border-radius: var(--radius); padding: 16px 18px !important; margin: 8px 0; border: 1px solid var(--blue-border); border-bottom: 1px solid var(--blue-border) !important; }
+.acerca-seccion-contacto h3 { border-bottom-color: var(--blue-border); }
+.acerca-email {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-top: 8px;
+  font-size: .95rem !important;
+}
+.acerca-email a {
+  color: var(--blue-mid);
+  font-weight: 600;
+  word-break: break-all;
+}
+
+.acerca-footer {
+  padding: 16px 28px;
+  border-top: 1px solid var(--gray-200);
+  display: flex;
+  justify-content: flex-end;
+  background: var(--gray-100);
+}
+
+/* ---- FOOTER: línea de copyright ---- */
+.footer-copy {
+  color: rgba(255,255,255,.5);
+  font-size: .75rem;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  flex-wrap: wrap;
+  margin-top: 2px;
+}
+.footer-link {
+  background: none;
+  border: none;
+  color: rgba(255,255,255,.65);
+  font-size: .75rem;
+  font-family: var(--font);
+  cursor: pointer;
+  padding: 0;
+  text-decoration: underline;
+  transition: color .15s;
+}
+.footer-link:hover { color: var(--white); }
+.footer-link-a {
+  color: rgba(255,255,255,.65);
+  font-size: .75rem;
+  text-decoration: underline;
+  transition: color .15s;
+}
+.footer-link-a:hover { color: var(--white); }
+
 /* ---- MODAL ---- */
 .modal-overlay {
   position: fixed;

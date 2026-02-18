@@ -18,8 +18,10 @@
  * 11. Tab: Historial
  * 12. Tab: Ajustes
  * 13. Exportación PDF
- * 14. Modal + Toast
- * 15. Arranque
+ * 14. Modal Acerca de
+ * 15. Modal confirmación + Toast
+ * 16. Utilidades
+ * 17. Arranque
  */
 
 'use strict';
@@ -1258,7 +1260,38 @@ function exportarPDF(texto, caso) {
 }
 
 /* ============================================================
-   14. MODAL + TOAST
+   14. MODAL ACERCA DE
+   ============================================================ */
+
+function openAcercaDe() {
+  document.getElementById('acerca-overlay').style.display = '';
+  // Devolver el foco al botón de cierre para accesibilidad
+  document.getElementById('btn-cerrar-acerca').focus();
+}
+
+function closeAcercaDe() {
+  document.getElementById('acerca-overlay').style.display = 'none';
+}
+
+document.getElementById('btn-abrir-acerca').addEventListener('click', openAcercaDe);
+document.getElementById('btn-cerrar-acerca').addEventListener('click', closeAcercaDe);
+document.getElementById('btn-cerrar-acerca-2').addEventListener('click', closeAcercaDe);
+document.getElementById('footer-link-acerca').addEventListener('click', openAcercaDe);
+
+// Cerrar al hacer clic en el overlay (fuera del cuadro)
+document.getElementById('acerca-overlay').addEventListener('click', (e) => {
+  if (e.target === document.getElementById('acerca-overlay')) closeAcercaDe();
+});
+
+// Cerrar con Escape
+document.addEventListener('keydown', (e) => {
+  if (e.key === 'Escape') {
+    if (document.getElementById('acerca-overlay').style.display !== 'none') closeAcercaDe();
+  }
+});
+
+/* ============================================================
+   15. MODAL CONFIRMACIÓN + TOAST
    ============================================================ */
 
 let _modalCallback = null;
@@ -1292,7 +1325,7 @@ function showToast(msg, type = 'info', duration = 3500) {
 }
 
 /* ============================================================
-   15. UTILIDADES
+   16. UTILIDADES
    ============================================================ */
 
 // Escapa HTML para prevenir XSS en innerHTML
@@ -1306,7 +1339,7 @@ function esc(str) {
 }
 
 /* ============================================================
-   16. ARRANQUE
+   17. ARRANQUE
    ============================================================ */
 
 async function init() {

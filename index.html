@@ -20,7 +20,11 @@
           <p id="header-subtitle">Herramienta de apoyo para evaluación ética de protocolos</p>
         </div>
       </div>
-      <div class="header-meta" id="header-meta"></div>
+      <div class="header-meta" id="header-meta">
+        <button class="btn-acerca-de" id="btn-abrir-acerca" aria-label="Acerca de AYUDA CEIA">
+          Acerca de
+        </button>
+      </div>
     </div>
   </header>
 
@@ -314,12 +318,131 @@
         <span id="footer-version"></span>
         &bull;
         <span id="footer-autoria"></span>
-        &bull;
-        <span id="footer-contacto"></span>
+        <span id="footer-contacto-wrap">&bull; <span id="footer-contacto"></span></span>
       </div>
       <div class="footer-disclaimer" id="footer-disclaimer"></div>
+      <div class="footer-copy">
+        &copy; 2026 Ramón Morillo
+        &nbsp;&bull;&nbsp;
+        <button class="footer-link" id="footer-link-acerca">Acerca de</button>
+        &nbsp;&bull;&nbsp;
+        <a class="footer-link-a" href="mailto:ralejandro.morillo.sspa@juntadeandalucia.es">Contacto</a>
+      </div>
     </div>
   </footer>
+
+  <!-- ====== MODAL: ACERCA DE ====== -->
+  <div id="acerca-overlay" class="modal-overlay acerca-overlay" style="display:none" role="dialog" aria-modal="true" aria-labelledby="acerca-titulo">
+    <div class="acerca-box">
+      <div class="acerca-header">
+        <div>
+          <h2 id="acerca-titulo">AYUDA CEIA</h2>
+          <p class="acerca-tagline">Creado por Ramón Morillo &middot; Febrero 2026</p>
+        </div>
+        <button class="acerca-close" id="btn-cerrar-acerca" aria-label="Cerrar">&times;</button>
+      </div>
+
+      <div class="acerca-body">
+
+        <!-- AUTORÍA -->
+        <section class="acerca-seccion">
+          <h3>Autoría</h3>
+          <div class="acerca-bloque">
+            <p><strong>Desarrollado por:</strong></p>
+            <p class="acerca-nombre">Ramón Morillo</p>
+          </div>
+          <div class="acerca-bloque">
+            <p><strong>Asistencia técnica:</strong></p>
+            <p>Desarrollo asistido mediante herramientas de inteligencia artificial (Claude Code / Large Language Models).</p>
+          </div>
+        </section>
+
+        <!-- BASE METODOLÓGICA -->
+        <section class="acerca-seccion">
+          <h3>Base metodológica</h3>
+          <p>AYUDA CEIA se fundamenta en principios ampliamente aceptados en evaluación ética y metodología de investigación:</p>
+          <ul>
+            <li>Principios generales de ética en investigación biomédica</li>
+            <li>Marcos de evaluación utilizados por Comités de Ética de la Investigación</li>
+            <li>Revisión estructurada de protocolos</li>
+            <li>Conceptos metodológicos relacionados con:
+              <ul>
+                <li>Validez científica</li>
+                <li>Balance beneficio-riesgo</li>
+                <li>Protección de participantes</li>
+                <li>Calidad metodológica</li>
+              </ul>
+            </li>
+          </ul>
+        </section>
+
+        <!-- DECLARACIÓN DE INDEPENDENCIA -->
+        <section class="acerca-seccion">
+          <h3>Declaración de independencia</h3>
+          <p>AYUDA CEIA es una herramienta independiente. No está afiliada, respaldada ni certificada oficialmente por:</p>
+          <ul>
+            <li>Comités de Ética de la Investigación</li>
+            <li>Agencias reguladoras</li>
+            <li>Instituciones sanitarias</li>
+            <li>Sociedades científicas</li>
+          </ul>
+        </section>
+
+        <!-- USO PREVISTO Y LIMITACIONES -->
+        <section class="acerca-seccion">
+          <h3>Uso previsto y limitaciones</h3>
+          <p><strong>AYUDA CEIA:</strong></p>
+          <ul class="acerca-lista-neg">
+            <li><span class="acerca-no">NO</span> sustituye la evaluación formal realizada por un CEI</li>
+            <li><span class="acerca-no">NO</span> constituye una aprobación ética</li>
+            <li><span class="acerca-no">NO</span> reemplaza la revisión experta</li>
+            <li>Funciona como herramienta de apoyo orientativa</li>
+          </ul>
+          <p style="margin-top:10px"><strong>Los resultados obtenidos:</strong></p>
+          <ul>
+            <li>Dependen de la información introducida</li>
+            <li>No garantizan conformidad regulatoria</li>
+            <li>Requieren interpretación profesional</li>
+          </ul>
+        </section>
+
+        <!-- DERECHOS Y LICENCIA -->
+        <section class="acerca-seccion">
+          <h3>Derechos y licencia</h3>
+          <p>&copy; 2026 Ramón Morillo. Todos los derechos reservados.</p>
+          <p>Queda prohibida la reproducción, redistribución o modificación total o parcial sin autorización expresa del autor.</p>
+        </section>
+
+        <!-- CÓMO CITAR -->
+        <section class="acerca-seccion">
+          <h3>Cómo citar esta herramienta</h3>
+          <div class="acerca-cita">
+            <p class="acerca-cita-label">APA (7.ª edición)</p>
+            <p>Morillo, R. (2026). <em>AYUDA CEIA</em> (Versión 1.0) [Software]. Disponible en: <span class="acerca-url">https://ramonmorillo.github.io/ayudaceia/</span></p>
+          </div>
+          <div class="acerca-cita">
+            <p class="acerca-cita-label">Vancouver</p>
+            <p>Morillo R. AYUDA CEIA. Version 1.0 [software]. 2026. Disponible en: <span class="acerca-url">https://ramonmorillo.github.io/ayudaceia/</span></p>
+          </div>
+        </section>
+
+        <!-- CONTACTO -->
+        <section class="acerca-seccion acerca-seccion-contacto">
+          <h3>Contacto</h3>
+          <p>Para incidencias, sugerencias o colaboración académica:</p>
+          <p class="acerca-email">
+            <span aria-hidden="true">&#9993;</span>
+            <a href="mailto:ralejandro.morillo.sspa@juntadeandalucia.es">ralejandro.morillo.sspa@juntadeandalucia.es</a>
+          </p>
+        </section>
+
+      </div><!-- /acerca-body -->
+
+      <div class="acerca-footer">
+        <button class="btn-primary" id="btn-cerrar-acerca-2">Cerrar</button>
+      </div>
+    </div>
+  </div>
 
   <!-- ====== MODAL CONFIRMACIÓN ====== -->
   <div id="modal-overlay" class="modal-overlay" style="display:none">

@@ -1,0 +1,341 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>AYUDA CEIA</title>
+  <!-- jsPDF CDN para exportación PDF client-side -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+
+  <!-- ====== HEADER ====== -->
+  <header id="app-header">
+    <div class="header-inner">
+      <div class="header-brand">
+        <span class="header-logo">⚖</span>
+        <div>
+          <h1 id="header-tool-name">AYUDA CEIA</h1>
+          <p id="header-subtitle">Herramienta de apoyo para evaluación ética de protocolos</p>
+        </div>
+      </div>
+      <div class="header-meta" id="header-meta"></div>
+    </div>
+  </header>
+
+  <!-- ====== NAVEGACIÓN ====== -->
+  <nav id="main-nav">
+    <button class="nav-btn active" data-tab="tab-nuevo">Nuevo caso</button>
+    <button class="nav-btn" data-tab="tab-lectura">Lectura guiada</button>
+    <button class="nav-btn" data-tab="tab-evaluacion">Evaluación</button>
+    <button class="nav-btn" data-tab="tab-preguntas">Preguntas</button>
+    <button class="nav-btn" data-tab="tab-dictamen">Dictamen</button>
+    <button class="nav-btn" data-tab="tab-historial">Historial</button>
+    <button class="nav-btn" data-tab="tab-ajustes">Ajustes</button>
+  </nav>
+
+  <!-- ====== CONTENIDO PRINCIPAL ====== -->
+  <main id="main-content">
+
+    <!-- ===== TAB: NUEVO CASO ===== -->
+    <section id="tab-nuevo" class="tab-section active">
+      <div class="section-header">
+        <h2>Nuevo caso</h2>
+        <p class="section-desc">Introduce los datos del protocolo a evaluar. Los datos se guardan localmente en tu navegador.</p>
+      </div>
+
+      <div class="case-notice" id="editing-notice" style="display:none">
+        <strong>Editando caso:</strong> <span id="editing-case-id"></span>
+        <button class="btn-link" id="btn-new-case-clear">Crear caso nuevo</button>
+      </div>
+
+      <form id="form-nuevo-caso" class="form-grid" novalidate>
+        <div class="form-row">
+          <div class="form-group">
+            <label for="campo-id">ID interno <span class="req">*</span></label>
+            <input type="text" id="campo-id" placeholder="ej. CEI-2026-014" required />
+            <span class="field-hint">Identificador único del caso</span>
+          </div>
+          <div class="form-group">
+            <label for="campo-evaluador">Evaluador <span class="req">*</span></label>
+            <input type="text" id="campo-evaluador" placeholder="Nombre del evaluador" required />
+          </div>
+        </div>
+
+        <div class="form-group full-width">
+          <label for="campo-titulo">Título del protocolo <span class="req">*</span></label>
+          <input type="text" id="campo-titulo" placeholder="Título completo del protocolo" required />
+        </div>
+
+        <div class="form-row">
+          <div class="form-group">
+            <label for="campo-tipo">Tipo de estudio <span class="req">*</span></label>
+            <select id="campo-tipo" required>
+              <option value="">— Seleccionar —</option>
+              <option value="Observacional">Observacional</option>
+              <option value="Intervencional no fármaco">Intervencional no fármaco</option>
+              <option value="Uso secundario de datos">Uso secundario de datos</option>
+              <option value="Cualitativo">Cualitativo</option>
+              <option value="Mixto">Mixto</option>
+              <option value="Académico (TFG/TFM/Tesis)">Académico (TFG/TFM/Tesis)</option>
+              <option value="Otro">Otro</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label for="campo-ambito">Ámbito <span class="req">*</span></label>
+            <select id="campo-ambito" required>
+              <option value="">— Seleccionar —</option>
+              <option value="Hospital">Hospital</option>
+              <option value="Atención Primaria">Atención Primaria</option>
+              <option value="Multicéntrico">Multicéntrico</option>
+              <option value="Otro">Otro</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="form-row">
+          <div class="form-group">
+            <label for="campo-datos">Tipo de datos <span class="req">*</span></label>
+            <select id="campo-datos" required>
+              <option value="">— Seleccionar —</option>
+              <option value="Identificables">Identificables</option>
+              <option value="Seudonimizados">Seudonimizados</option>
+              <option value="Anónimos">Anónimos</option>
+              <option value="No especifica">No especifica</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label>Población vulnerable</label>
+            <div class="radio-group">
+              <label><input type="radio" name="vulnerable" value="no" checked /> No</label>
+              <label><input type="radio" name="vulnerable" value="si" /> Sí</label>
+            </div>
+            <input type="text" id="campo-vulnerable-texto" placeholder="Describir si es Sí" style="margin-top:6px" />
+          </div>
+        </div>
+
+        <div class="form-group full-width">
+          <label for="campo-texto">Texto del protocolo <span class="req">*</span></label>
+          <p class="field-hint">Pega aquí el texto completo del protocolo (recomendado). Para ficheros PDF/DOCX, copia el texto manualmente desde el documento.</p>
+          <textarea id="campo-texto" rows="18" placeholder="Pega aquí el texto completo del protocolo...&#10;&#10;Consejo: incluye todos los apartados (objetivos, metodología, participantes, procedimientos, consideraciones éticas, etc.) para que la Lectura Guiada y la Evaluación sean más útiles."></textarea>
+        </div>
+
+        <div class="form-actions">
+          <button type="submit" class="btn-primary" id="btn-guardar-caso">Guardar caso</button>
+          <button type="button" class="btn-secondary" id="btn-preview-lectura">Guardar y ver Lectura guiada →</button>
+        </div>
+      </form>
+    </section>
+
+    <!-- ===== TAB: LECTURA GUIADA ===== -->
+    <section id="tab-lectura" class="tab-section">
+      <div class="section-header">
+        <h2>Lectura guiada</h2>
+        <p class="section-desc">Resumen estructurado generado a partir del texto del protocolo. Puedes editar cualquier campo.</p>
+      </div>
+
+      <div class="no-case-msg" id="lectura-no-case">
+        <p>No hay ningún caso activo. Ve a <strong>Nuevo caso</strong> para crear o cargar uno.</p>
+      </div>
+
+      <div id="lectura-content" style="display:none">
+        <div class="case-info-bar" id="lectura-case-bar"></div>
+
+        <div class="alert-box" id="lectura-alertas" style="display:none">
+          <h3>Alertas de huecos típicos</h3>
+          <ul id="lista-alertas"></ul>
+        </div>
+
+        <div class="lectura-grid" id="lectura-campos"></div>
+
+        <div class="form-actions">
+          <button class="btn-primary" id="btn-guardar-lectura">Guardar resumen</button>
+          <button class="btn-secondary" id="btn-regenerar-lectura">Regenerar desde texto</button>
+          <button class="btn-secondary" id="btn-ir-evaluacion">Ir a Evaluación →</button>
+        </div>
+      </div>
+    </section>
+
+    <!-- ===== TAB: EVALUACIÓN ===== -->
+    <section id="tab-evaluacion" class="tab-section">
+      <div class="section-header">
+        <h2>Evaluación por dominios</h2>
+        <p class="section-desc">Evalúa el protocolo en cada dominio. El semáforo resume el resultado. Los comentarios son obligatorios si el resultado es ámbar o rojo.</p>
+      </div>
+
+      <div class="no-case-msg" id="evaluacion-no-case">
+        <p>No hay ningún caso activo. Ve a <strong>Nuevo caso</strong> para crear o cargar uno.</p>
+      </div>
+
+      <div id="evaluacion-content" style="display:none">
+        <div class="case-info-bar" id="evaluacion-case-bar"></div>
+        <div id="dominios-container"></div>
+        <div class="form-actions">
+          <button class="btn-primary" id="btn-guardar-evaluacion">Guardar evaluación</button>
+          <button class="btn-secondary" id="btn-ir-preguntas">Generar preguntas →</button>
+        </div>
+      </div>
+    </section>
+
+    <!-- ===== TAB: PREGUNTAS ===== -->
+    <section id="tab-preguntas" class="tab-section">
+      <div class="section-header">
+        <h2>Preguntas al investigador</h2>
+        <p class="section-desc">Preguntas formales generadas a partir de dominios ámbar/rojo. Puedes editar, añadir y reordenar.</p>
+      </div>
+
+      <div class="no-case-msg" id="preguntas-no-case">
+        <p>No hay ningún caso activo. Ve a <strong>Nuevo caso</strong> para crear o cargar uno.</p>
+      </div>
+
+      <div id="preguntas-content" style="display:none">
+        <div class="case-info-bar" id="preguntas-case-bar"></div>
+        <div id="preguntas-lista"></div>
+        <div class="form-actions">
+          <button class="btn-secondary" id="btn-add-pregunta">+ Añadir pregunta</button>
+          <button class="btn-primary" id="btn-guardar-preguntas">Guardar preguntas</button>
+          <button class="btn-secondary" id="btn-ir-dictamen">Generar dictamen →</button>
+        </div>
+      </div>
+    </section>
+
+    <!-- ===== TAB: DICTAMEN ===== -->
+    <section id="tab-dictamen" class="tab-section">
+      <div class="section-header">
+        <h2>Borrador de dictamen</h2>
+        <p class="section-desc">Borrador formal generado automáticamente. Revísalo y ajústalo antes de usarlo.</p>
+      </div>
+
+      <div class="no-case-msg" id="dictamen-no-case">
+        <p>No hay ningún caso activo. Ve a <strong>Nuevo caso</strong> para crear o cargar uno.</p>
+      </div>
+
+      <div id="dictamen-content" style="display:none">
+        <div class="case-info-bar" id="dictamen-case-bar"></div>
+
+        <div class="dictamen-recomendacion">
+          <label><strong>Recomendación del evaluador:</strong></label>
+          <div class="radio-group reco-group">
+            <label><input type="radio" name="recomendacion" value="Favorable" /> Favorable</label>
+            <label><input type="radio" name="recomendacion" value="Favorable condicionado" /> Favorable condicionado</label>
+            <label><input type="radio" name="recomendacion" value="No favorable" /> No favorable</label>
+          </div>
+          <p class="field-hint" id="sugerencia-recomendacion"></p>
+        </div>
+
+        <div class="dictamen-doc" id="dictamen-doc">
+          <textarea id="dictamen-texto" rows="32" class="dictamen-textarea"></textarea>
+        </div>
+
+        <div class="disclaimer-box" id="dictamen-disclaimer"></div>
+
+        <div class="form-actions">
+          <button class="btn-primary" id="btn-export-pdf">Exportar PDF</button>
+          <button class="btn-secondary" id="btn-copy-dictamen">Copiar al portapapeles</button>
+          <button class="btn-secondary" id="btn-regenerar-dictamen">Regenerar borrador</button>
+          <button class="btn-secondary" id="btn-guardar-dictamen">Guardar dictamen</button>
+        </div>
+      </div>
+    </section>
+
+    <!-- ===== TAB: HISTORIAL ===== -->
+    <section id="tab-historial" class="tab-section">
+      <div class="section-header">
+        <h2>Historial de casos</h2>
+        <p class="section-desc">Todos los casos guardados en este navegador.</p>
+      </div>
+
+      <div class="historial-toolbar">
+        <input type="search" id="historial-search" placeholder="Buscar por ID o título..." />
+        <button class="btn-secondary" id="btn-refresh-historial">Actualizar</button>
+      </div>
+
+      <div id="historial-lista"></div>
+    </section>
+
+    <!-- ===== TAB: AJUSTES ===== -->
+    <section id="tab-ajustes" class="tab-section">
+      <div class="section-header">
+        <h2>Ajustes</h2>
+        <p class="section-desc">Personalización de la herramienta. Los cambios persisten en tu navegador.</p>
+      </div>
+
+      <form id="form-ajustes" class="form-grid" novalidate>
+        <div class="form-row">
+          <div class="form-group">
+            <label for="aj-nombre">Nombre de la herramienta</label>
+            <input type="text" id="aj-nombre" />
+          </div>
+          <div class="form-group">
+            <label for="aj-version">Versión</label>
+            <input type="text" id="aj-version" />
+          </div>
+        </div>
+        <div class="form-row">
+          <div class="form-group">
+            <label for="aj-autoria">Autoría / Coordinación</label>
+            <input type="text" id="aj-autoria" />
+          </div>
+          <div class="form-group">
+            <label for="aj-contacto">Contacto (email)</label>
+            <input type="email" id="aj-contacto" />
+          </div>
+        </div>
+        <div class="form-group full-width">
+          <label for="aj-disclaimer">Texto de disclaimer</label>
+          <textarea id="aj-disclaimer" rows="4"></textarea>
+        </div>
+        <div class="form-actions">
+          <button type="submit" class="btn-primary">Guardar ajustes</button>
+          <button type="button" class="btn-secondary" id="btn-reset-ajustes">Restaurar valores por defecto</button>
+        </div>
+      </form>
+
+      <div class="settings-info">
+        <h3>Acerca de AYUDA CEIA</h3>
+        <p>Esta herramienta funciona completamente en local, sin enviar datos a ningún servidor. Toda la información se almacena en la base de datos IndexedDB de tu navegador.</p>
+        <ul>
+          <li>No requiere conexión a internet (salvo la primera carga para las librerías CDN).</li>
+          <li>No integra IA ni APIs externas.</li>
+          <li>Compatible con GitHub Pages y cualquier hosting estático.</li>
+          <li>Para hacer copia de seguridad, exporta cada caso a PDF desde el Dictamen o el Historial.</li>
+        </ul>
+      </div>
+    </section>
+
+  </main>
+
+  <!-- ====== FOOTER ====== -->
+  <footer id="app-footer">
+    <div class="footer-inner">
+      <div class="footer-left">
+        <span id="footer-tool-name">AYUDA CEIA</span>
+        <span id="footer-version"></span>
+        &bull;
+        <span id="footer-autoria"></span>
+        &bull;
+        <span id="footer-contacto"></span>
+      </div>
+      <div class="footer-disclaimer" id="footer-disclaimer"></div>
+    </div>
+  </footer>
+
+  <!-- ====== MODAL CONFIRMACIÓN ====== -->
+  <div id="modal-overlay" class="modal-overlay" style="display:none">
+    <div class="modal-box">
+      <h3 id="modal-title">Confirmar acción</h3>
+      <p id="modal-message"></p>
+      <div class="modal-actions">
+        <button class="btn-danger" id="modal-confirm">Confirmar</button>
+        <button class="btn-secondary" id="modal-cancel">Cancelar</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ====== TOAST ====== -->
+  <div id="toast" class="toast" style="display:none"></div>
+
+  <script src="app.js"></script>
+</body>
+</html>
